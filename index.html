@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Kit</title>
+  <style id="static-styles">
+    :root { 
+        --main-bg: #fcd34d; --main-text: #333333; --header-bg: #fcd34d; --header-text: #333333; --btn-bg: #4db6ac; --btn-text: #ffffff; --card-bg: #ffffff; --card-text: #555555; --grad-start: #6d28d9; --grad-end: #4f46e5;
+        --cp-grad-start: #fde047; --cp-grad-end: #a3e635; --cp-container-bg: rgba(255, 255, 255, 0.8); --cp-text: #3f6212; --cp-input-bg: #f7fee7; --cp-btn-bg: #84cc16; --cp-btn-active-bg: #65a30d;
+    }
+    body { margin:0; font-family: Arial, sans-serif; background: var(--main-bg); color: var(--main-text); overflow-x:hidden; } .hidden { display:none; }
+    .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px; background:#06b6d4;} .login-card{background:#fff;padding:30px 25px;border-radius:12px;width:100%;max-width:350px;box-shadow:0 6px 20px rgba(0,0,0,.15)} .login-card h2{margin:0 0 10px;font-size:20px;text-align:center;color:#111} .login-card p{font-size:13px;text-align:center;color:#444;margin-bottom:20px;line-height:1.4} .login-card label{font-weight:bold;font-size:13px;margin-top:12px;display:block} .login-card input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:6px;font-size:14px; box-sizing: border-box;} .login-card .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px} .login-card .row label{font-weight:normal;font-size:13px} .login-card .row a{font-size:13px;color:#0366d6;text-decoration:none} .login-card .btn{width:100%;padding:12px;background:#10b981;border:none;border-radius:8px;font-size:15px;color:#fff;cursor:pointer;margin-top:18px} .login-card .btn:hover{background:#059669} .login-card .gbtn{width:100%;padding:12px;background:#f1f5f9;border:none;border-radius:8px;font-size:15px;color:#333;cursor:pointer;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px} .login-card .gbtn img{width:20px} .login-card .signup{text-align:center;font-size:13px;margin-top:14px} .login-card .signup a{color:#0366d6;text-decoration:none;cursor:pointer}
+    .header { background: var(--header-bg); color: var(--header-text); padding:15px; display:flex; justify-content:space-between; align-items:center; font-size:20px; font-weight:bold; border-bottom: 2px solid #fff; }
+    .menu-btn { font-size:26px; cursor:pointer; } .sidebar { height:100%; width:0; position:fixed; top:0; left:0; background:#00bcd4; box-shadow:2px 0 8px rgba(0,0,0,.3); overflow-y:auto; transition:.3s; padding-top:20px; z-index:1000; } .sidebar .sidebar-balance { padding: 10px 20px; margin: 0 15px 15px 15px; background: rgba(255,255,255,0.2); border-radius: 25px; font-size: 16px; color: #fff; display: flex; justify-content: space-between; align-items: center; font-weight: bold; } .sidebar .sidebar-balance .close-btn { font-size: 28px; cursor: pointer; font-weight: normal; } .sidebar a { padding: 12px 20px; text-decoration:none; font-size:16px; color:#fff; display:flex; align-items:center; gap: 15px; transition:.2s; cursor: pointer; } .sidebar a:hover { background:rgba(0,0,0,0.1); }
+    .page-container { background:#fff; margin:20px; padding:20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); text-align: center; } .page-container h2 { color:#0094f5; margin-top: 0; }
+    #home { background-color: var(--main-bg); padding-bottom: 15px; }
+    .welcome-banner { background: linear-gradient(to right, var(--grad-start), var(--grad-end)); color: white; padding: 25px 20px; margin: -1px; display: flex; align-items: center; gap: 15px; border-radius: 0 0 25px 25px; }
+    .welcome-banner .avatar { width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #4f46e5; font-weight: bold; flex-shrink: 0; }
+    .welcome-banner .text h3 { margin: 0; font-size: 18px; font-weight: bold; }
+    .welcome-banner .text p { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }
+    .stats { display: flex; flex-direction: column; gap:15px; margin:20px 15px; }
+    .stat-card { background: var(--card-bg); padding: 20px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,.08); display: flex; align-items: center; gap: 15px; }
+    .stat-card .icon { font-size: 32px; flex-shrink: 0; }
+    .stat-card .info { text-align: right; flex-grow: 1; }
+    .stat-card .info .value { font-size: 22px; font-weight: bold; color: #0366d6; }
+    .stat-card .info .label { font-size: 14px; color: var(--card-text); margin-top: 2px; }
+    .form-box { background: var(--card-bg); margin:15px; padding: 20px 15px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,.1); text-align: left; }
+    .form-box .form-title { font-size: 18px; font-weight: bold; margin-top: 0; margin-bottom: 20px; }
+    .form-box .form-subtitle { font-weight: bold; font-size: 16px; margin: 18px 0 8px 0; color: var(--main-text); }
+    .form-box input, .form-box textarea, .form-box select { background-color: #f0f8ff; border: 1px solid #e0f2f1; border-radius: 12px; padding: 14px; font-size: 15px; margin-top: 0; width: 100%; box-sizing: border-box; }
+    .form-box input[readonly] { background-color: #e9f5f4; }
+    .form-box .quantity-info { font-size: 13px; color: var(--card-text); margin: 5px 0 0 5px; }
+    .form-box .submit-btn { width: 100%; margin-top: 20px; padding: 14px; background: var(--btn-bg); color: var(--btn-text); font-size: 16px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+    .form-box .submit-btn:hover { opacity: 0.9; }
+    .form-box > label { display:none; }
+    .custom-select-wrapper { position: relative; user-select: none; }
+    .custom-select-trigger { background-color: #f0f8ff; border: 1px solid #e0f2f1; border-radius: 12px; padding: 14px; font-size: 15px; cursor: pointer; position: relative; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .custom-select-trigger::after { content: '▼'; font-size: 10px; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; transition: transform 0.2s; }
+    .custom-select-wrapper.open .custom-select-trigger::after { transform: translateY(-50%) rotate(180deg); }
+    .custom-options { display: none; background-color: var(--card-bg); border-radius: 12px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-height: 250px; overflow-y: auto; z-index: 10; position: relative; }
+    .custom-select-wrapper.open .custom-options { display: block; }
+    .custom-option { padding: 12px 15px; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: flex-start; gap: 10px; }
+    .custom-option:hover { background-color: #f0f8ff; }
+    .service-id-badge { background-color: #6c757d; color: white; padding: 4px 8px; border-radius: 8px; font-size: 13px; font-weight: bold; flex-shrink: 0; line-height: 1.4; }
+    .service-content { display: flex; flex-direction: column; }
+    .service-name { font-size: 14px; color: var(--main-text); line-height: 1.4; word-break: break-word; }
+    .service-details { font-size: 13px; color: var(--btn-bg); font-weight: bold; margin-top: 4px; }
+    #serviceValue .service-id-badge-trigger { background-color: #6c757d; color: white; padding: 2px 6px; border-radius: 6px; font-size: 12px; margin-right: 8px; }
+    #addBalanceScreen { background-color: var(--main-bg); }
+    .add-balance-container { padding: 25px; margin: 20px; }
+    .add-balance-title { color: #007bff; font-weight: bold; font-size: 24px; margin-bottom: 15px; text-align: center; }
+    #addBalanceScreen .qr { width: 220px; max-width: 80%; margin: 10px auto; display: block; }
+    .upi-id { font-weight: bold; margin-top: 10px; color: var(--main-text); text-align: center; font-size: 14px; margin-bottom: 20px; }
+    .instructions p { margin: 5px 0; font-weight: 500; color: var(--main-text); text-align: center; font-size: 15px; }
+    #addFundsSuccessText, #addFundsWarningText { padding: 12px; border-radius: 8px; margin: 15px 0; font-weight: bold; font-size: 14px; text-align: left; line-height: 1.5; }
+    #addFundsSuccessText { background: #e8f5e9; color: #2e7d32; }
+    #addFundsWarningText { background: #ffebee; color: #c62828; }
+    .add-balance-form { margin-top: 20px; }
+    .add-balance-form input { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
+    .verify-btn { background: #007bff; color: #fff; width: 100%; border-radius: 12px; padding: 14px; font-weight: bold; border: none; font-size: 16px; cursor: pointer; }
+    .order-card { background: #ffffff; margin-bottom: 12px; padding: 15px; border-radius: 8px; text-align: left; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-left: 5px solid #03a9f4; position: relative; } .order-card p { margin: 5px 0; font-size: 14px; word-wrap: break-word; } .order-card p strong { color: #333; } .order-status { position: absolute; top: 15px; right: 15px; padding: 4px 12px; border-radius: 15px; color: #fff; font-size: 12px; font-weight: bold; text-transform: capitalize; } .status-pending { background-color: #ff9800; } .order-card.status-pending { border-left-color: #ff9800; } .status-completed { background-color: #4caf50; } .order-card.status-completed { border-left-color: #4caf50; } .status-processing, .status-in-progress { background-color: #2196f3; } .order-card.status-processing, .order-card.status-in-progress { border-left-color: #2196f3; } .status-canceled, .status-refunded { background-color: #f44336; } .order-card.status-canceled, .order-card.status-refunded { border-left-color: #f44336; }
+    .category-accordion { background-color: #03a9f4; color: white; cursor: pointer; padding: 15px; width: 100%; border: none; text-align: left; outline: none; font-size: 16px; transition: 0.4s; border-radius: 8px; margin-top: 10px; } .category-accordion:after { content: '\\002B'; color: white; font-weight: bold; float: right; margin-left: 5px; } .category-accordion.active:after { content: "\\2212"; } .category-accordion:hover { background-color: #0288d1; } .services-panel { padding: 0 18px; background-color: white; max-height: 0; overflow: hidden; transition: max-height 0.2s ease-out; border-radius: 0 0 8px 8px; } .service-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; text-align: left; } .service-item:last-child { border-bottom: none; } .service-item p { margin: 0; font-size: 14px; flex-grow: 1; } .service-item span { font-size: 13px; color: #555; margin-left: 15px; white-space: nowrap; }
+    #accountScreen { background: linear-gradient(to bottom, #fde047, #a3e635); padding: 20px; box-sizing: border-box; }
+    .account-form-container { max-width: 500px; margin: 0 auto; }
+    .account-form-container .input-group { margin-bottom: 15px; }
+    .account-form-container label { font-weight: bold; color: #3f6212; display: block; margin-bottom: 5px; }
+    .account-form-container input { width: 100%; background: rgba(255, 255, 255, 0.7); border: 1px solid #a3e635; border-radius: 12px; padding: 14px; font-size: 16px; box-sizing: border-box; color: #1a2e05; }
+    .account-form-container input:read-only { background: rgba(255, 255, 255, 0.4); cursor: not-allowed; }
+    .account-form-container .btn { width: 100%; background: #65a30d; color: white; border: none; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    #supportScreen { background-color: var(--main-bg); }
+    .support-container { background-color: var(--card-bg); color: var(--main-text); margin: 20px; padding: 25px; border-radius: 15px; }
+    .support-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 20px; }
+    .support-form label { font-weight: bold; display: block; margin: 15px 0 5px 0; }
+    .support-form input, .support-form select, .support-form textarea { background-color: #f0f8ff; border-radius: 12px; border: 1px solid #e0f2f1; width: 100%; padding: 14px; box-sizing: border-box; font-size: 15px; }
+    .support-form textarea { resize: vertical; min-height: 100px; }
+    .support-form .submit-ticket-btn { width: 100%; margin-top: 20px; background-color: var(--btn-bg); color: var(--btn-text); font-weight: bold; border: none; border-radius: 12px; padding: 14px; cursor: pointer; font-size: 16px; }
+    .support-form .submit-ticket-btn:hover { opacity: 0.9; }
+    #childPanelScreen { background: linear-gradient(to bottom, var(--cp-grad-start), var(--cp-grad-end)); padding: 20px; box-sizing: border-box; }
+    .child-panel-container { max-width: 500px; margin: 0 auto; background: var(--cp-container-bg); padding: 20px; border-radius: 15px; }
+    .child-panel-buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+    .child-panel-buttons .btn { background: var(--cp-btn-bg); color: white; border: none; border-radius: 10px; padding: 10px 20px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .child-panel-buttons .btn.active { background: var(--cp-btn-active-bg); }
+    .child-panel-buttons .btn:not(.active) { background-color: var(--cp-btn-bg); opacity: 0.7; }
+    .child-panel-form label { font-weight: bold; color: var(--cp-text); display: block; margin: 15px 0 5px 0; }
+    .child-panel-form input, .child-panel-form select { width: 100%; background: var(--cp-input-bg); border: 1px solid var(--cp-btn-active-bg); border-radius: 12px; padding: 14px; font-size: 16px; box-sizing: border-box; color: var(--cp-text); }
+    .child-panel-form input[readonly] { background: #e2e8f0; }
+    .child-panel-info-box { background: #dbeafe; color: #1e40af; padding: 15px; border-radius: 12px; margin: 15px 0; text-align: left; font-size: 14px; line-height: 1.5; }
+    .child-panel-form .btn { width: 100%; background: var(--cp-btn-active-bg); color: white; border: none; border-radius: 12px; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+    .child-panel-footer { text-align: center; margin-top: 30px; color: var(--cp-text); font-size: 14px; }
+    .child-panel-history table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .child-panel-history th, .child-panel-history td { padding: 10px; text-align: center; border-bottom: 1px solid #d1d5db; color: var(--cp-text); }
+    .child-panel-history th { font-weight: bold; }
+    #order-error-popup { background-color: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; font-weight: bold; display: none; }
+    .whatsapp-btn { position:fixed; width:55px; height:55px; bottom:20px; right:20px; background:#25D366; color:#fff; border-radius:50%; text-align:center; font-size:28px; box-shadow:0 4px 8px rgba(0,0,0,.3); z-index:9999; line-height:55px; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div id="loginScreen"> <div class="login-wrap"> <div class="login-card" id="loginCard"><h2>SMART KIT LOGIN</h2><p>Welcome back! Please sign in.</p><label>Email / Username</label><input type="text" id="email" placeholder="Enter your email"/><label>Password</label><input type="password" id="password" placeholder="Enter your password"/><div class="row"><label><input type="checkbox" id="rememberMe"> Remember me</label><a href="#" onclick="forgotPassword()">Forgot password?</a></div><button class="btn" onclick="login()">Sign in</button><button class="gbtn" onclick="googleLogin()"><img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"/> Login with Google</button><div class="signup">Do not have an account? <a onclick="showSignUp()">Sign up</a></div></div> <div class="login-card hidden" id="signUpCard"><h2>Create Account</h2><p>Join us today. It's free!</p><label>Email</label><input type="text" id="signUpEmail" placeholder="Enter your email"/><label>Password</label><input type="password" id="signUpPassword" placeholder="Enter your password"/><button class="btn" onclick="register()">Sign up</button><div class="signup">Already have an account? <a onclick="showLogin()">Login</a></div></div> </div> </div>
+  <div id="panelScreen" class="hidden"> <div class="header"><span>SMART KIT</span><span class="menu-btn" onclick="openMenu()">☰</span></div>
+    <div id="sidebar" class="sidebar"> <div class="sidebar-balance"><span>₹ <span id="sidebarBalance">0.00</span></span><span class="close-btn" onclick="closeMenu()">×</span></div> <a onclick="showDashboard()">🛍️ New Order</a> <a onclick="showOrdersScreen()">📄 Orders</a> <a onclick="showServicesScreen()">🛠️ Services</a> <a onclick="showAddBalanceScreen()">💳 Add Funds</a> <a onclick="showSupportScreen()">🎧 Support</a> <a onclick="showChildPanelScreen()">👨‍👦 Child Panel</a><a>👥 Affiliate</a><a>🔗 API</a><a>💸 Transfer Funds</a><a>📰 blogs</a> <a onclick="showAccountScreen()">👤 Account</a> <a>📜 Rules</a> <a onclick="logout()">↪️ Logout</a> </div>
+    
+    <div id="home">
+      <div class="welcome-banner">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="text">
+          <h3 id="welcomeUsername">Welcome User</h3>
+          <p>Welcome To Our Panel</p>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat-card">
+            <div class="icon">🪙</div>
+            <div class="info">
+                <div class="value" id="totalSpent">₹0.00</div>
+                <div class="label">Total Spent</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">👥</div>
+            <div class="info">
+                <div class="value" id="panelOrders">0</div>
+                <div class="label">Members</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">🐷</div>
+            <div class="info">
+                <div class="value" id="totalBalance">₹0.00</div>
+                <div class="label">Total Balance</div>
+            </div>
+        </div>
+      </div>
+      
+      <div class="form-box">
+        <h3 class="form-title">📦 Place New Order</h3>
+        <div id="order-error-popup"></div>
+        <h4 class="form-subtitle">🔍 Search</h4>
+        <input type="text" id="search" placeholder="Search service..." oninput="populateServices(true)" />
+        <h4 class="form-subtitle">Category</h4>
+        <div class="custom-select-wrapper" id="categoryWrapper">
+            <div class="custom-select-trigger"><span id="categoryValue">Select a category...</span></div>
+            <div class="custom-options" id="categoryOptions"></div>
+        </div>
+        <h4 class="form-subtitle">Service</h4>
+        <div class="custom-select-wrapper" id="serviceWrapper">
+            <div class="custom-select-trigger"><span id="serviceValue">Select a service...</span></div>
+            <div class="custom-options" id="serviceOptions"></div>
+        </div>
+        <h4 class="form-subtitle">Link</h4>
+        <input type="text" id="link" placeholder="Enter your link" />
+        <h4 class="form-subtitle">Quantity</h4>
+        <input type="number" id="quantity" value="1000" min="1" oninput="calculateTotal()" />
+        <p class="quantity-info" id="quantityInfo"></p>
+        <h4 class="form-subtitle">Charge</h4>
+        <input type="text" id="totalPrice" readonly />
+        <button class="submit-btn" onclick="placeOrder()">Submit</button>
+      </div>
+    </div>
+
+    <div id="addBalanceScreen" class="hidden">
+        <div class="page-container add-balance-container">
+            <h2 class="add-balance-title">💳 Add Balance</h2>
+            <img id="qrCodeImage" src="" alt="QR Code" class="qr" />
+            <p class="upi-id">UPI ID: ajaruddinytbusiness-1@oksbi</p>
+            <div class="instructions">
+                <p>STEP 1 : SCAN THIS BARCODE</p>
+                <p>STEP 2 : PAY AMOUNT</p>
+                <p>STEP 3 : PUT AMOUNT & UTR</p>
+                <p>STEP 4 : CLICK VERIFY</p>
+            </div>
+            <p id="addFundsSuccessText"></p>
+            <p id="addFundsWarningText"></p>
+            <div class="add-balance-form">
+                <input type="text" id="utr" placeholder="Enter Transaction UTR" />
+                <input type="number" id="amount" placeholder="Enter Amount ₹" />
+                <button class="btn verify-btn" onclick="verifyTxn()">✅ Verify Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ordersScreen" class="hidden"><div class="page-container"><h2>📄 My Orders</h2><div id="ordersListContainer"></div></div></div>
+    <div id="servicesScreen" class="hidden"><div class="page-container"><h2>🛠️ All Services</h2><div id="servicesListContainer"></div></div></div>
+
+    <div id="accountScreen" class="hidden">
+        <div class="account-form-container">
+            <div class="input-group">
+                <label for="accountUsername">Username</label>
+                <input type="text" id="accountUsername" readonly>
+            </div>
+            <div class="input-group">
+                <label for="accountName">Name</label>
+                <input type="text" id="accountName">
+            </div>
+            <div class="input-group">
+                <label for="accountEmail">E-mail</label>
+                <input type="email" id="accountEmail" readonly>
+            </div>
+             <div class="input-group">
+                <label for="accountSkype">Skype</label>
+                <input type="text" id="accountSkype" placeholder="your.skype.id">
+            </div>
+            <hr style="border-color: rgba(0,0,0,0.1); margin: 20px 0;">
+            <div class="input-group">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+            <div class="input-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+            <div class="input-group">
+                <label for="passwordRetry">Password (Retry)</label>
+                <input type="password" id="passwordRetry" placeholder="Enter new password again">
+            </div>
+            <button class="btn" onclick="changePassword()">Change password</button>
+        </div>
+    </div>
+
+    <div id="supportScreen" class="hidden">
+        <div class="support-container">
+            <h2 class="support-title">🎧 Support Ticket</h2>
+            <div class="support-form">
+                <label for="ticketSubject">Subject</label>
+                <select id="ticketSubject">
+                    <option>Order</option>
+                    <option>Payment</option>
+                    <option>Service</option>
+                    <option>Other</option>
+                </select>
+                <label for="ticketOrderId">Order ID: [For multiple orders, please separate them using comma. (example: 31851525,31851511,31851509)]</label>
+                <input type="text" id="ticketOrderId" placeholder="">
+                <label for="ticketRequest">Request</label>
+                <select id="ticketRequest">
+                    <option>Refill</option>
+                    <option>Cancel</option>
+                    <option>Speed Up</option>
+                    <option>Other</option>
+                </select>
+                <label for="ticketMessage">Message</label>
+                <textarea id="ticketMessage" rows="5" placeholder=""></textarea>
+                <button class="submit-ticket-btn" onclick="submitSupportTicket()">Submit ticket</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="childPanelScreen" class="hidden">
+        <div class="child-panel-container">
+            <div class="child-panel-buttons">
+                <button class="btn active" id="orderTabBtn" onclick="switchChildPanelTab('order')">Order Child Panel</button>
+                <button class="btn" id="historyTabBtn" onclick="switchChildPanelTab('history')">CHECK HISTORY</button>
+            </div>
+            <div class="child-panel-form" id="childPanelOrder">
+                <label>Domain</label>
+                <input type="text" id="childPanelDomain" placeholder="example.com">
+                <div class="child-panel-info-box" id="childPanelInfoBox"></div>
+                <label>Currency</label>
+                <select id="childPanelCurrency">
+                    <option>Indian Rupee (INR)</option>
+                </select>
+                <label>Username</label>
+                <input type="text" id="childPanelUsername" placeholder="Username">
+                <label>Password</label>
+                <input type="password" id="childPanelPassword" placeholder="Password">
+                <label>Confirm Password</label>
+                <input type="password" id="childPanelConfirmPassword" placeholder="Password">
+                <label>Charge</label>
+                <input type="text" id="childPanelCharge" readonly>
+                <button class="btn" onclick="submitChildPanelOrder()">Submit Order</button>
+            </div>
+            <div class="child-panel-history hidden" id="childPanelHistory">
+                <table id="childPanelHistoryTable">
+                    <thead><tr><th>#</th><th>Domain</th><th>Currency</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="child-panel-footer">
+            © Copyright. All Rights Reserved.
+        </div>
+    </div>
+
+    <a id="waFloat" href="#" class="whatsapp-btn" target="_blank">💬</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyA-p2HQH06_G7Pp6UKbMXHhkKewnHjmVB0", authDomain: "smmpanel-3381d.firebaseapp.com", databaseURL: "https://smmpanel-3381d-default-rtdb.firebaseio.com", projectId: "smmpanel-3381d", storageBucket: "smmpanel-3381d.appspot.com", messagingSenderId: "27044073769", appId: "1:27044073769:web:8ea3e64260ef906b082738" };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth(); const db = firebase.database();
+
+    function showSignUp(){ document.getElementById("loginCard").classList.add("hidden"); document.getElementById("signUpCard").classList.remove("hidden"); }
+    function showLogin(){ document.getElementById("signUpCard").classList.add("hidden"); document.getElementById("loginCard").classList.remove("hidden"); }
+    function login(){ const email=document.getElementById('email').value; const pass=document.getElementById('password').value; if(!email || !pass) return alert("Please enter email and password."); auth.signInWithEmailAndPassword(email,pass).catch(e=>alert(e.message)); }
+    function register(){ const email=document.getElementById('signUpEmail').value; const pass=document.getElementById('signUpPassword').value; if(!email||!pass) return alert("Please enter all details."); auth.createUserWithEmailAndPassword(email,pass).then(cred => { return db.ref("users/"+cred.user.uid).set({ email: email, balance: 0, spent: 0, joined: Date.now() }); }).then(() => { alert("Account created! Please login."); showLogin(); }).catch(e=>alert(e.message)); }
+    function googleLogin(){ const provider=new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(provider).then(result=>{ const user=result.user; db.ref("users/"+user.uid).once("value").then(snap=>{ if(!snap.exists()){ db.ref("users/"+user.uid).set({email:user.email,balance:0,spent:0,joined:Date.now()}); } }); }).catch(e=>alert(e.message)); }
+    function forgotPassword(){ const email=document.getElementById('email').value; if(!email) return alert("Enter your email first."); auth.sendPasswordResetEmail(email).then(()=>alert("Password reset email sent!")).catch(e=>alert(e.message)); }
+    function logout(){ if (confirm("Are you sure you want to logout?")) { auth.signOut(); } }
+    
+    auth.onAuthStateChanged(user => { 
+        if(user){ 
+            document.getElementById("loginScreen").classList.add("hidden"); 
+            document.getElementById("panelScreen").classList.remove("hidden"); 
+            const userEmail = user.email;
+            const username = userEmail.split('@')[0];
+            document.getElementById("welcomeUsername").textContent = username;
+            document.getElementById("userAvatar").textContent = username.charAt(0).toUpperCase();
+            db.ref("users/" + user.uid).on("value", snap => { 
+                const userData = snap.val() || { balance: 0, spent: 0 }; 
+                document.getElementById("totalBalance").textContent = "₹" + (userData.balance || 0).toFixed(2); 
+                document.getElementById("sidebarBalance").textContent = (userData.balance || 0).toFixed(2); 
+                document.getElementById("totalSpent").textContent = "₹" + (userData.spent || 0).toFixed(2); 
+            }); 
+        } else { 
+            document.getElementById("panelScreen").classList.add("hidden"); 
+            document.getElementById("loginScreen").classList.remove("hidden"); 
+            showLogin(); 
+        } 
+    });
+    
+    db.ref("settings").on("value", snap => { 
+        const s = snap.val() || {}; const texts = s.siteTexts || {}; const theme = s.theme || {};
+        const cpTheme = theme.childPanel || {};
+        const root = document.documentElement;
+        
+        function hexToRgba(hex, alpha = 1) {
+            if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) return `rgba(255,255,255,${alpha})`;
+            let c = hex.substring(1).split('');
+            if (c.length === 3) { c = [c[0], c[0], c[1], c[1], c[2], c[2]]; }
+            c = '0x' + c.join('');
+            return `rgba(${[(c>>16)&255, (c>>8)&255, c&255].join(',')},${alpha})`;
+        }
+        
+        root.style.setProperty('--main-bg', theme.bodyBg || '#fcd34d');
+        root.style.setProperty('--main-text', theme.text || '#333333');
+        root.style.setProperty('--header-bg', theme.headerBg || '#fcd34d');
+        root.style.setProperty('--header-text', theme.headerText || '#333333');
+        root.style.setProperty('--btn-bg', theme.btnBg || '#4db6ac');
+        root.style.setProperty('--btn-text', theme.btnText || '#ffffff');
+        root.style.setProperty('--card-bg', theme.cardBg || '#ffffff');
+        root.style.setProperty('--card-text', theme.cardText || '#555555');
+        root.style.setProperty('--grad-start', theme.gradStart || '#6d28d9');
+        root.style.setProperty('--grad-end', theme.gradEnd || '#4f46e5');
+        
+        root.style.setProperty('--cp-grad-start', cpTheme.gradStart || '#fde047');
+        root.style.setProperty('--cp-grad-end', cpTheme.gradEnd || '#a3e635');
+        root.style.setProperty('--cp-container-bg', hexToRgba(cpTheme.containerBg || '#ffffff', 0.8));
+        root.style.setProperty('--cp-text', cpTheme.text || '#3f6212');
+        root.style.setProperty('--cp-input-bg', cpTheme.inputBg || '#f7fee7');
+        root.style.setProperty('--cp-btn-bg', cpTheme.btnBg || '#84cc16');
+        root.style.setProperty('--cp-btn-active-bg', cpTheme.btnActiveBg || '#65a30d');
+
+        document.getElementById('panelOrders').textContent = s.panelOrders || 0; 
+        if(s.whatsappLink) document.getElementById("waFloat").href = s.whatsappLink; 
+        if(s.qrCodeUrl) document.getElementById('qrCodeImage').src = s.qrCodeUrl; 
+        if(texts.addFundsSuccess) { document.getElementById('addFundsSuccessText').innerHTML = '' + texts.addFundsSuccess; document.getElementById('addFundsSuccessText').style.display = 'block'; } else { document.getElementById('addFundsSuccessText').style.display = 'none'; }
+        if(texts.addFundsWarning) { document.getElementById('addFundsWarningText').innerHTML = '' + texts.addFundsWarning; document.getElementById('addFundsWarningText').style.display = 'block'; } else { document.getElementById('addFundsWarningText').style.display = 'none'; }
+        
+        const childPanelPrice = s.childPanelPrice || 800;
+        const childPanelInfo = texts.childPanelInfo || "Please visit your registrar's dashboard to change nameservers to:<br>• ns1.perfectdns.com<br>• ns2.perfectdns.com";
+        document.getElementById('childPanelCharge').value = `₹${childPanelPrice}`;
+        document.getElementById('childPanelInfoBox').innerHTML = childPanelInfo;
+    });
+    
+    function openMenu(){ document.getElementById("sidebar").style.width = "280px"; }
+    function closeMenu(){ document.getElementById("sidebar").style.width = "0"; }
+    function showPage(pageName) { document.querySelectorAll('#panelScreen > div[id$="Screen"], #panelScreen > div#home').forEach(el => el.classList.add('hidden')); document.getElementById(pageName).classList.remove('hidden'); closeMenu(); if (window['load' + pageName.charAt(0).toUpperCase() + pageName.slice(1)]) { window['load' + pageName.charAt(0).toUpperCase() + pageName.slice(1)](); } }
+    function showDashboard() { showPage('home'); }
+    function showAddBalanceScreen() { showPage('addBalanceScreen'); }
+    function showOrdersScreen() { showPage('ordersScreen'); }
+    function showServicesScreen() { showPage('servicesScreen'); }
+    function showAccountScreen() { showPage('accountScreen'); }
+    function showSupportScreen() { showPage('supportScreen'); }
+    function showChildPanelScreen() { showPage('childPanelScreen'); loadChildPanelHistory(); }
+    function switchChildPanelTab(tab) {
+        if (tab === 'order') {
+            document.getElementById('childPanelOrder').classList.remove('hidden');
+            document.getElementById('childPanelHistory').classList.add('hidden');
+            document.getElementById('orderTabBtn').classList.add('active');
+            document.getElementById('historyTabBtn').classList.remove('active');
+        } else {
+            document.getElementById('childPanelOrder').classList.add('hidden');
+            document.getElementById('childPanelHistory').classList.remove('hidden');
+            document.getElementById('orderTabBtn').classList.remove('active');
+            document.getElementById('historyTabBtn').classList.add('active');
+            loadChildPanelHistory();
+        }
+    }
+    function submitChildPanelOrder() {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return alert("Please log in.");
+        const domain = document.getElementById('childPanelDomain').value.trim();
+        const currency = document.getElementById('childPanelCurrency').value;
+        const username = document.getElementById('childPanelUsername').value.trim();
+        const pass = document.getElementById('childPanelPassword').value;
+        const confirmPass = document.getElementById('childPanelConfirmPassword').value;
+        const chargeText = document.getElementById('childPanelCharge').value;
+        const cost = parseFloat(chargeText.replace('₹', ''));
+        if (!domain || !username || !pass || !confirmPass) return alert("Please fill all required fields.");
+        if (pass !== confirmPass) return alert("Passwords do not match.");
+        if (!domain.includes('.')) return alert("Please enter a valid domain name.");
+        const userRef = db.ref('users/' + currentUser.uid);
+        userRef.transaction(userData => {
+            if (userData) {
+                if ((userData.balance || 0) < cost) return;
+                userData.balance -= cost;
+                userData.spent = (userData.spent || 0) + cost;
+                return userData;
+            }
+            return;
+        }).then(result => {
+            if (!result.committed) {
+                alert("🔴 Order Failed: Insufficient balance.");
+            } else {
+                const orderId = "cp_" + Date.now();
+                const payload = { user: currentUser.uid, email: currentUser.email, domain: domain, currency: currency, username: username, cost: cost, status: "Pending", time: Date.now() };
+                db.ref("child_panels/" + orderId).set(payload)
+                .then(() => {
+                    alert("✅ Child Panel Ordered Successfully!");
+                    document.getElementById('childPanelDomain').value = '';
+                    document.getElementById('childPanelUsername').value = '';
+                    document.getElementById('childPanelPassword').value = '';
+                    document.getElementById('childPanelConfirmPassword').value = '';
+                    switchChildPanelTab('history');
+                })
+                .catch(() => {
+                    alert("🔴 Critical Error: Balance deducted, but order failed. Refunding.");
+                    userRef.transaction(userData => { if(userData) { userData.balance += cost; userData.spent -= cost; } return userData; });
+                });
+            }
+        }).catch(error => alert("🔴 Order Error: " + error.message));
+    }
+    function loadChildPanelHistory() {
+        const u = auth.currentUser;
+        if (!u) return;
+        const tbody = document.getElementById('childPanelHistoryTable').querySelector('tbody');
+        tbody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+        db.ref('child_panels').orderByChild('user').equalTo(u.uid).on('value', snap => {
+            if (snap.exists()) {
+                tbody.innerHTML = '';
+                let index = 1;
+                snap.forEach(childSnap => {
+                    const order = childSnap.val();
+                    const row = tbody.insertRow(-1);
+                    row.innerHTML = `<td>${index++}</td><td>${order.domain}</td><td>${order.currency}</td>`;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3">No history found.</td></tr>';
+            }
+        });
+    }
+
+    function loadOrdersScreen() { fetchUserOrders(); }
+    function loadAccountScreen() { 
+        const u = auth.currentUser; 
+        if(u) {
+            const email = u.email;
+            const username = email.split('@')[0];
+            document.getElementById('accountEmail').value = email;
+            document.getElementById('accountUsername').value = username;
+            document.getElementById('accountName').value = username.toUpperCase();
+        } 
+    }
+    function changePassword() { 
+        const user = auth.currentUser;
+        const currentPass = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value; 
+        const retryPass = document.getElementById('passwordRetry').value;
+        if (!currentPass || !newPass || !retryPass) return alert('Please fill all password fields.');
+        if (newPass !== retryPass) return alert('New passwords do not match.');
+        if (newPass.length < 6) return alert('New password must be at least 6 characters long.');
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPass);
+        user.reauthenticateWithCredential(credential).then(() => {
+            return user.updatePassword(newPass);
+        }).then(() => {
+            alert('✅ Password updated successfully!'); 
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('passwordRetry').value = '';
+        }).catch((error) => { 
+            console.error(error);
+            if (error.code === 'auth/wrong-password') {
+                alert('Error: The current password you entered is incorrect.');
+            } else {
+                alert('An error occurred: ' + error.message);
+            }
+        }); 
+    }
+
+    function verifyTxn(){ const u = auth.currentUser; if (!u) return alert("Please log in."); const utr = document.getElementById('utr').value.trim(); const amt = document.getElementById('amount').value.trim(); if(!utr || !amt || +amt <= 0) return alert("⚠️ Please enter valid UTR & Amount"); const txnId = "txn_" + Date.now(); const payload = { user: u.uid, email: u.email, utr: utr, amount: +amt, status: "Pending", time: Date.now() }; db.ref("transactions/" + txnId).set(payload).then(() => { alert("✅ Request submitted!"); showDashboard(); }).catch(err => alert("Error: " + err.message)); }
+    function submitSupportTicket() { const u = auth.currentUser; if (!u) return alert("Please log in."); const subject = document.getElementById('ticketSubject').value; const orderId = document.getElementById('ticketOrderId').value.trim(); const request = document.getElementById('ticketRequest').value; const message = document.getElementById('ticketMessage').value.trim(); if (!message) return alert("Please enter a message."); if (subject === 'Order' && !orderId) return alert("Please enter Order ID."); const ticketId = "t_" + Date.now(); const payload = { user: u.uid, email: u.email, subject, orderId, request, message, status: "Open", time: Date.now() }; db.ref("tickets/" + ticketId).set(payload).then(() => { alert("✅ Ticket submitted!"); showDashboard(); }).catch(err => alert("Error: " + err.message)); }
+    function fetchUserOrders() { const u = auth.currentUser; if (!u) return; const cont = document.getElementById('ordersListContainer'); cont.innerHTML = '<p>Loading...</p>'; db.ref('orders').orderByChild('user').equalTo(u.uid).on('value', (snap) => { if (snap.exists()) { const data = snap.val(); let html = Object.keys(data).map(k => {const o=data[k]; const d=new Date(o.time).toLocaleString(); const s=o.status?o.status.toLowerCase().replace(' ','-'):'pending'; return `<div class="order-card status-${s}"><span class="order-status status-${s}">${o.status}</span><p><strong>Service:</strong> ${o.service}</p><p><strong>Link:</strong> ${o.link}</p><p><strong>Qty:</strong> ${o.qty}</p><p><strong>Amount:</strong> ₹${o.amount.toFixed(2)}</p><p><strong>Date:</strong> ${d}</p></div>`;}).reverse().join(''); cont.innerHTML = html; } else { cont.innerHTML = '<p>No orders yet.</p>'; } }); }
+    function renderServicesList() { const cont = document.getElementById('servicesListContainer'); if (!servicesData || Object.keys(servicesData).length === 0) { cont.innerHTML = '<p>No services available.</p>'; return; } let html = ''; for (const cat in servicesData) { html += `<button class="category-accordion">${cat}</button><div class="services-panel">`; for (const name in servicesData[cat]) { const s = servicesData[cat][name]; const rate = parseFloat(s.rate||0).toFixed(2); html += `<div class="service-item"><p>${name}</p><span>₹${rate}</span></div>`; } html += `</div>`; } cont.innerHTML = html; document.querySelectorAll('.category-accordion').forEach(b => { b.addEventListener('click', () => { b.classList.toggle('active'); const p = b.nextElementSibling; p.style.maxHeight = p.style.maxHeight ? null : p.scrollHeight + "px"; }); }); }
+    
+    let servicesData = {};
+    let selectedCategory = null;
+    let selectedService = null;
+
+    function initCustomDropdowns() {
+        ['category', 'service'].forEach(type => {
+            const wrapper = document.getElementById(`${type}Wrapper`);
+            wrapper.querySelector('.custom-select-trigger').addEventListener('click', (event) => {
+                event.stopPropagation();
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => { if (w !== wrapper) w.classList.remove('open'); });
+                wrapper.classList.toggle('open');
+            });
+        });
+        window.addEventListener('click', () => document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open')));
+    }
+    
+    db.ref("services").on("value", snap => { 
+        servicesData = snap.val() || {}; 
+        populateCategories(); 
+        renderServicesList(); 
+        initCustomDropdowns();
+    });
+
+    function populateCategories(){
+        const optionsContainer = document.getElementById('categoryOptions');
+        optionsContainer.innerHTML = "";
+        const catNames = Object.keys(servicesData);
+        
+        catNames.forEach(catName => {
+            const optEl = document.createElement('div');
+            optEl.className = 'custom-option';
+            optEl.innerHTML = catName;
+            optEl.dataset.value = catName;
+            optEl.addEventListener('click', () => {
+                document.getElementById('search').value = '';
+                selectedCategory = catName;
+                document.getElementById('categoryValue').innerHTML = catName;
+                selectedService = null;
+                document.getElementById('serviceValue').innerHTML = 'Select a service...';
+                document.getElementById('categoryWrapper').classList.remove('open');
+                populateServices(true);
+            });
+            optionsContainer.appendChild(optEl);
+        });
+
+        if (!selectedCategory && catNames.length > 0) {
+            selectedCategory = catNames[0];
+            document.getElementById('categoryValue').innerHTML = selectedCategory;
+            populateServices(true);
+        }
+    }
+
+    function populateServices(autoSelectFirst = false) {
+        const optionsContainer = document.getElementById('serviceOptions');
+        optionsContainer.innerHTML = "";
+        if (autoSelectFirst) { selectedService = null; }
+
+        const query = (document.getElementById("search").value || "").toLowerCase();
+        let servicesToShow = [];
+
+        if (query) {
+            Object.keys(servicesData).forEach(catName => {
+                Object.keys(servicesData[catName]).forEach(servName => {
+                    if (servName.toLowerCase().includes(query)) {
+                        servicesToShow.push({ name: servName, category: catName });
+                    }
+                });
+            });
+        } else if (selectedCategory && servicesData[selectedCategory]) {
+            servicesToShow = Object.keys(servicesData[selectedCategory]).map(servName => ({
+                name: servName, category: selectedCategory
+            }));
+        }
+
+        servicesToShow.forEach(serviceInfo => {
+            const { name: servName, category: catName } = serviceInfo;
+            const serviceData = servicesData[catName][servName];
+            const optEl = document.createElement('div');
+            optEl.className = 'custom-option';
+            const idMatch = servName.match(/^(\d+)\s*-\s*/);
+            const serviceId = idMatch ? idMatch[1] : '●';
+
+            optEl.innerHTML = `
+                <span class="service-id-badge">${serviceId}</span>
+                <div class="service-content">
+                    <div class="service-name">${servName}</div>
+                    <div class="service-details">₹${(serviceData.rate || 0).toFixed(2)} per 1000</div>
+                </div>`;
+            
+            optEl.addEventListener('click', () => {
+                selectedCategory = catName;
+                selectedService = servName;
+                document.getElementById('categoryValue').innerHTML = selectedCategory;
+                const truncatedName = servName.length > 35 ? servName.substring(0, 35) + '...' : servName;
+                document.getElementById('serviceValue').innerHTML = `<span class="service-id-badge-trigger">${serviceId}</span> ${truncatedName}`;
+                document.getElementById('serviceWrapper').classList.remove('open');
+                updateServiceDetails();
+            });
+            optionsContainer.appendChild(optEl);
+        });
+
+        if (autoSelectFirst && servicesToShow.length > 0) {
+            const firstService = servicesToShow[0];
+            selectedCategory = firstService.category;
+            selectedService = firstService.name;
+            document.getElementById('categoryValue').innerHTML = selectedCategory;
+            const idMatch = selectedService.match(/^(\d+)\s*-\s*/);
+            const serviceId = idMatch ? idMatch[1] : '●';
+            const truncatedName = selectedService.length > 35 ? selectedService.substring(0, 35) + '...' : selectedService;
+            document.getElementById('serviceValue').innerHTML = `<span class="service-id-badge-trigger">${serviceId}</span> ${truncatedName}`;
+            updateServiceDetails();
+        } else if (!selectedService) {
+            document.getElementById('serviceValue').innerHTML = 'Select a service...';
+            document.getElementById('totalPrice').value = '';
+            document.getElementById('quantityInfo').textContent = '';
+        }
+        
+        if (servicesToShow.length === 0) {
+            document.getElementById('serviceValue').innerHTML = 'No services found...';
+        }
+    }
+
+    function updateServiceDetails() {
+        if (!selectedCategory || !selectedService || !servicesData[selectedCategory]?.[selectedService]) return;
+        const data = servicesData[selectedCategory][selectedService];
+        const min = data.min || 'N/A';
+        const max = data.max || 'N/A';
+        document.getElementById('quantityInfo').textContent = `Min: ${min} - Max: ${max}`;
+        document.getElementById('quantity').min = data.min || 1;
+        document.getElementById('quantity').max = data.max || 1000000;
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        if (!selectedCategory || !selectedService || !servicesData[selectedCategory]?.[selectedService]) { document.getElementById("totalPrice").value = ""; return; }
+        const data = servicesData[selectedCategory][selectedService];
+        const qty = parseInt(document.getElementById("quantity").value) || 0;
+        const ratePerThousand = data.rate || 0;
+        const total = qty * (ratePerThousand / 1000);
+        document.getElementById("totalPrice").value = "₹" + total.toFixed(3);
+    }
+    
+    function placeOrder(){
+        const errorPopup = document.getElementById('order-error-popup');
+        const currentUser = auth.currentUser;
+        if (!currentUser) return alert("Please log in.");
+        
+        const link = document.getElementById("link").value.trim();
+        const qty = parseInt(document.getElementById("quantity").value) || 0;
+        if (!selectedCategory || !selectedService || !link || qty <= 0) return alert("Please fill all fields correctly.");
+
+        const serviceData = servicesData[selectedCategory][selectedService];
+        const minQty = parseInt(serviceData.min) || 0;
+        const maxQty = parseInt(serviceData.max) || 1000000;
+
+        if (qty < minQty) {
+            errorPopup.textContent = `Min order: ${minQty}`;
+            errorPopup.style.display = 'block';
+            errorPopup.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+
+        if (qty > maxQty) {
+            errorPopup.textContent = `Max order: ${maxQty}`;
+            errorPopup.style.display = 'block';
+            errorPopup.scrollIntoView({ behavior: 'smooth' });
+            return;
+        }
+        
+        errorPopup.style.display = 'none';
+
+        const ratePerThousand = (+serviceData.rate || 0);
+        const amount = +(qty * (ratePerThousand / 1000)).toFixed(2);
+        const userRef = db.ref('users/' + currentUser.uid);
+        userRef.transaction(data => {
+            if (data) {
+                if ((data.balance || 0) < amount) return;
+                data.balance -= amount;
+                data.spent = (data.spent || 0) + amount;
+                return data;
+            }
+        }).then(result => {
+            if (!result.committed) {
+                alert("🔴 Order Failed: Insufficient balance.");
+            } else {
+                const orderId = "o_" + Date.now();
+                const payload = { user: currentUser.uid, email: currentUser.email, category: selectedCategory, service: selectedService, link: link, qty: qty, amount: amount, status: "Pending", time: Date.now() };
+                db.ref("orders/" + orderId).set(payload)
+                .then(() => {
+                    alert("✅ Order placed successfully!");
+                    document.getElementById("link").value = '';
+                })
+                .catch(() => {
+                    alert("🔴 Critical Error: Balance deducted, but order failed. Refunding.");
+                    userRef.transaction(userData => { if(userData) { userData.balance += amount; userData.spent -= amount; } return userData; });
+                });
+            }
+        }).catch(error => alert("🔴 Order Error: " + error.message));
+    }
+</script>
+</body>
+</html>
